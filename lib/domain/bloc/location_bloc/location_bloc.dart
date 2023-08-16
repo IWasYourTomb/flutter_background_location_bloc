@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geotest/domain/api/provider/location_provider.dart';
@@ -26,30 +27,69 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   void _onLocationInit(LocationInit event, Emitter<LocationState> emit) {
-    _locationProvider.init();
-    emit(state.copyWith(status: LocationStatus.initial));
+    try {
+      _locationProvider.init();
+      emit(state.copyWith(status: LocationStatus.initial));
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LocationStatus.error,
+          errorMessage: 'Ошибка',
+        ),
+      );
+      addError(e);
+    }
   }
 
   void _onListenLocation(
       ListenLocation event, Emitter<LocationState> emit) async {
-    if (!_isServiceRunning && await _locationProvider.isServiceEnabled()) {
-      _isServiceRunning = true;
-      _locationProvider.locationStream.listen((event) async {
-        currPosition = event;
-        _networkProvider.sendLocation(currPosition.latitude, currPosition.longitude);
-        _networkProvider.getLogs();
-      });
-      Dev.log('$currPosition', name: 'POSITION');
-      emit(state.copyWith(
-          status: LocationStatus.listening, posititon: currPosition));
-    } else {
-      _isServiceRunning = false;
+    try {
+      if (!_isServiceRunning && await _locationProvider.isServiceEnabled()) {
+        _isServiceRunning = true;
+        _locationProvider.locationStream.listen((event) async {
+          currPosition = event;
+          _networkProvider.sendLocation(
+              currPosition.latitude, currPosition.longitude);
+          _networkProvider.getLogs();
+        });
+        Dev.log('$currPosition', name: 'POSITION');
+        emit(state.copyWith(
+            status: LocationStatus.listening, posititon: currPosition));
+      } else {
+        _isServiceRunning = false;
+      }
+    } on DioError catch (e) {
+      emit(
+        state.copyWith(
+          status: LocationStatus.error,
+          errorMessage: e.stackTrace.toString(),
+        ),
+      );
+      addError(e);
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LocationStatus.error,
+          errorMessage: 'Ошибка',
+        ),
+      );
+      addError(e);
     }
   }
 
   void _onLocationChanged(LocationChanged event, Emitter<LocationState> emit) {
-    final streamLocation = _locationProvider.locationStream;
-    emit(state.copyWith(
-        status: LocationStatus.changed, currPosition: streamLocation));
+    try {
+      final streamLocation = _locationProvider.locationStream;
+      emit(state.copyWith(
+          status: LocationStatus.changed, currPosition: streamLocation));
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LocationStatus.error,
+          errorMessage: 'Ошибка',
+        ),
+      );
+      addError(e);
+    }
   }
 }
