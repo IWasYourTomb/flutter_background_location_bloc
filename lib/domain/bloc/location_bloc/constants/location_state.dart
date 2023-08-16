@@ -1,6 +1,6 @@
 enum LocationStatus{
   initial,
-  loading,
+  listening,
   changed,
   error
 }

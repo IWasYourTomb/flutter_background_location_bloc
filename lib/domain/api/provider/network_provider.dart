@@ -6,11 +6,7 @@ import 'package:injectable/injectable.dart';
 class NetworkProvider{
   final _repository = getIt.get<INetworkRepository>();
 
-  Future<void> sendLocation(double latitude, double longitude){
-    return _repository.sendLocation(latitude, longitude);
-  }
+  Future<void> sendLocation(double latitude, double longitude) => _repository.sendLocation(latitude, longitude);
 
-  Future<void> getLogs(){
-    return _repository.getLogs();
-  }
+  Future<void> getLogs() => _repository.getLogs();
 }

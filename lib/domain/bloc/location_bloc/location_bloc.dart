@@ -41,7 +41,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       });
       Dev.log('$currPosition', name: 'POSITION');
       emit(state.copyWith(
-          status: LocationStatus.changed, posititon: currPosition));
+          status: LocationStatus.listening, posititon: currPosition));
     } else {
       _isServiceRunning = false;
     }

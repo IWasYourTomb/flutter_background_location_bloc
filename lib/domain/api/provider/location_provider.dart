@@ -7,13 +7,9 @@ import 'package:latlong2/latlong.dart';
 class LocationProvider {
   final _repository = getIt.get<ILocationRepository>();
 
-  void init() {
-    return _repository.init();
-  }
+  void init() =>  _repository.init();
 
   Stream<LatLng> get locationStream => _repository.locationStream;
 
-  Future<bool> isServiceEnabled() {
-    return _repository.isServiceEnabled();
-  }
+  Future<bool> isServiceEnabled() =>  _repository.isServiceEnabled();
 }
