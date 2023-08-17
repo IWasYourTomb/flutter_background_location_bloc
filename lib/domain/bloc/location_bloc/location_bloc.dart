@@ -24,6 +24,13 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     on<LocationChanged>(_onLocationChanged);
     on<ListenLocation>(_onListenLocation);
     on<LocationInit>(_onLocationInit);
+    on<SendLocation>(_onSendLocation);
+  }
+
+  void _onSendLocation(SendLocation event, Emitter<LocationState> emit) {
+    _networkProvider.sendLocation(event.latitude, event.longitude);
+
+    emit(state.copyWith(status: LocationStatus.listening));
   }
 
   void _onLocationInit(LocationInit event, Emitter<LocationState> emit) {
@@ -48,9 +55,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         _isServiceRunning = true;
         _locationProvider.locationStream.listen((event) async {
           currPosition = event;
-          _networkProvider.sendLocation(
-              currPosition.latitude, currPosition.longitude);
-          _networkProvider.getLogs();
+          add(SendLocation(event.latitude, event.longitude));
+          // _networkProvider.sendLocation(
+          //     currPosition.latitude, currPosition.longitude);
+          // _networkProvider.getLogs();
         });
         Dev.log('$currPosition', name: 'POSITION');
         emit(state.copyWith(

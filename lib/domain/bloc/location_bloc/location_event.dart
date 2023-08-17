@@ -22,3 +22,13 @@ class LocationChanged extends LocationEvent {
 
 class ListenLocation extends LocationEvent {}
 
+class SendLocation extends LocationEvent {
+  final double latitude;
+  final double longitude;
+
+  const SendLocation(this.latitude, this.longitude);
+
+  @override
+  List<Object?> get props => [latitude, longitude];
+}
+
