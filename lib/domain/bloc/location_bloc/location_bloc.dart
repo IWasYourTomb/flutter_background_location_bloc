@@ -30,7 +30,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   void _onSendLocation(SendLocation event, Emitter<LocationState> emit) {
     _networkProvider.sendLocation(event.latitude, event.longitude);
 
-    emit(state.copyWith(status: LocationStatus.listening));
+    emit(state.copyWith(status: LocationStatus.sending));
   }
 
   void _onLocationInit(LocationInit event, Emitter<LocationState> emit) {
