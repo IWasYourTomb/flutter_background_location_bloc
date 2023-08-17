@@ -55,7 +55,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         _isServiceRunning = true;
         _locationProvider.locationStream.listen((event) async {
           currPosition = event;
-          add(SendLocation(event.latitude, event.longitude));
+          add(SendLocation(currPosition.latitude, currPosition.longitude));
         });
         Dev.log('$currPosition', name: 'POSITION');
         emit(state.copyWith(
